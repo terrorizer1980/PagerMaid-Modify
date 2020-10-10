@@ -1,7 +1,8 @@
 """ PagerMaid event listener. """
 
-import sys, posthog
+import sys, posthog, configparser
 
+from os.path import exists
 from telethon import events
 from telethon.errors import MessageTooLongError
 from distutils2.util import strtobool
@@ -61,6 +62,13 @@ def listener(**args):
                     posthog_capture = False
                     context.parameter = None
                     context.arguments = None
+                    if exists('data/alias.ini'):
+                        alias = configparser.ConfigParser()
+                        alias.read('data/alias.ini')
+                        if context.text.split()[0].replace('-', '') in alias.options('cmd'):
+                            posthog_capture = True
+                            context.parameter = alias.get('cmd', context.text.split()[0].replace('-', ''))
+                            context.arguments = context.text.replace(context.text.split()[0], '')
                 await function(context)
                 if posthog_capture:
                     try:
