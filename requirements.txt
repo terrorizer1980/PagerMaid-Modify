@@ -34,3 +34,4 @@ cheroot
 PySocks
 certifi
 magic_google
+httpx>=0.23.0 # not directly required, pinned by Snyk to avoid a vulnerability
